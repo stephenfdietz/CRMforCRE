@@ -4,9 +4,12 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Building2, Calendar, Users, Square } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useOpportunities } from "@/hooks/use-opportunities"
 
 // System stage definitions - should match the main app
 const SYSTEM_STAGES = {
@@ -64,196 +67,7 @@ const customerStageConfig = {
   CLOSED_LOST: { display_name: "Lost Deal", system_stage: "CLOSED_LOST" },
 }
 
-// Enhanced mock data with new stage system
-const mockOpportunities = [
-  {
-    id: "1",
-    name: "EcoVolt Multi-Location Expansion",
-    stage: "QUALIFIED", // Overall opportunity stage
-    company: {
-      name: "EcoVolt Energy Solutions",
-      logo: "/placeholder.svg?height=32&width=32",
-      industry: "Clean Energy Technology",
-      size: "500+ employees",
-    },
-    // Show primary building in kanban card
-    primaryBuilding: {
-      name: "Cobblestone Collaborative",
-      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&h=200&fit=crop&crop=entropy",
-      address: "1200 Tech Blvd, Austin",
-    },
-    totalSF: "27,475 SF",
-    spaceCount: 2, // Number of buildings/spaces involved
-    targetCloseDate: "2024-02-15",
-    status: "active",
-    expectedValue: "$1,250,000",
-    competitionLevel: "medium", // For Innovation Tower space
-    contacts: [
-      {
-        name: "Sarah Chen",
-        title: "VP Real Estate",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "SC",
-      },
-      {
-        name: "David Park",
-        title: "CFO",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "DP",
-      },
-    ],
-  },
-  {
-    id: "2",
-    name: "TechFlow HQ Consolidation",
-    stage: "NEGOTIATING",
-    company: {
-      name: "TechFlow Solutions",
-      logo: "/placeholder.svg?height=32&width=32",
-      industry: "Software",
-      size: "200+ employees",
-    },
-    primaryBuilding: {
-      name: "Innovation Tower",
-      image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=300&h=200&fit=crop&crop=entropy",
-      address: "500 Innovation Way, Austin",
-    },
-    totalSF: "18,200 SF",
-    spaceCount: 1,
-    targetCloseDate: "2024-01-28",
-    status: "active",
-    expectedValue: "$650,000",
-    competitionLevel: "high",
-    contacts: [
-      {
-        name: "Mike Rodriguez",
-        title: "Facilities Manager",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "MR",
-      },
-    ],
-  },
-  {
-    id: "3",
-    name: "DataCore Systems Expansion",
-    stage: "LEASE_DRAFTING",
-    company: {
-      name: "DataCore Systems",
-      logo: "/placeholder.svg?height=32&width=32",
-      industry: "Data Analytics",
-      size: "1000+ employees",
-    },
-    primaryBuilding: {
-      name: "Metro Business Center",
-      image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300&h=200&fit=crop&crop=entropy",
-      address: "800 Metro Plaza, Austin",
-    },
-    totalSF: "25,000 SF",
-    spaceCount: 1,
-    targetCloseDate: "2024-01-25",
-    status: "active",
-    expectedValue: "$825,000",
-    competitionLevel: "none",
-    contacts: [
-      {
-        name: "Jennifer Park",
-        title: "COO",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "JP",
-      },
-    ],
-  },
-  {
-    id: "4",
-    name: "StartupX Growth Space",
-    stage: "CLOSED_LOST",
-    company: {
-      name: "StartupX",
-      logo: "/placeholder.svg?height=32&width=32",
-      industry: "FinTech",
-      size: "50+ employees",
-    },
-    primaryBuilding: {
-      name: "Creative Commons",
-      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop&crop=entropy",
-      address: "300 Creative Ave, Austin",
-    },
-    totalSF: "3,000 SF",
-    spaceCount: 1,
-    targetCloseDate: "2024-01-10",
-    status: "lost",
-    expectedValue: "$108,000",
-    competitionLevel: "none",
-    contacts: [
-      {
-        name: "Alex Thompson",
-        title: "CEO",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "AT",
-      },
-    ],
-  },
-  {
-    id: "5",
-    name: "GreenTech Renewal",
-    stage: "NEW",
-    company: {
-      name: "GreenTech Innovations",
-      logo: "/placeholder.svg?height=32&width=32",
-      industry: "Clean Technology",
-      size: "150+ employees",
-    },
-    primaryBuilding: {
-      name: "Eco Building",
-      image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop&crop=entropy",
-      address: "400 Green Way, Austin",
-    },
-    totalSF: "12,000 SF",
-    spaceCount: 1,
-    targetCloseDate: "2024-03-01",
-    status: "active",
-    expectedValue: "$420,000",
-    competitionLevel: "low",
-    contacts: [
-      {
-        name: "David Kim",
-        title: "Operations Director",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "DK",
-      },
-    ],
-  },
-  {
-    id: "6",
-    name: "BioLab Research Facility",
-    stage: "CLOSED_WON",
-    company: {
-      name: "BioLab Sciences",
-      logo: "/placeholder.svg?height=32&width=32",
-      industry: "Biotechnology",
-      size: "300+ employees",
-    },
-    primaryBuilding: {
-      name: "Research Park",
-      image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=300&h=200&fit=crop&crop=entropy",
-      address: "600 Science Dr, Austin",
-    },
-    totalSF: "35,000 SF",
-    spaceCount: 1,
-    targetCloseDate: "2024-01-18",
-    status: "won",
-    expectedValue: "$1,575,000",
-    competitionLevel: "none",
-    contacts: [
-      {
-        name: "Dr. Lisa Wang",
-        title: "Facilities Director",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "LW",
-      },
-    ],
-  },
-]
+// Mock data removed - now using shared hook
 
 const getCompetitionBadge = (level: string) => {
   switch (level) {
@@ -269,11 +83,7 @@ const getCompetitionBadge = (level: string) => {
 }
 
 export function KanbanView() {
-  const [opportunities] = useState(mockOpportunities)
-
-  const getOpportunitiesByStage = (stageId: string) => {
-    return opportunities.filter((opp) => opp.stage === stageId)
-  }
+  const { opportunities, updateOpportunityStage, getOpportunitiesByStage } = useOpportunities()
 
   // Convert SYSTEM_STAGES to array and sort by order
   const stages = Object.values(SYSTEM_STAGES).sort((a, b) => a.order - b.order)
@@ -308,9 +118,26 @@ export function KanbanView() {
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute top-2 right-2 space-y-1">
-                          <Badge variant="secondary" className="text-xs bg-white/90 text-gray-700">
-                            {customerStageConfig[opportunity.stage as keyof typeof customerStageConfig]?.display_name}
-                          </Badge>
+                          <Select 
+                            value={opportunity.stage} 
+                            onValueChange={(value) => updateOpportunityStage(opportunity.id, value)}
+                          >
+                            <SelectTrigger className="w-32 h-6 text-xs bg-white/90 border-white/50">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(SYSTEM_STAGES)
+                                .sort((a, b) => a.order - b.order)
+                                .map((stage) => (
+                                  <SelectItem key={stage.system_stage} value={stage.system_stage}>
+                                    <div className="flex items-center space-x-2">
+                                      <div className={cn("w-2 h-2 rounded-full", stage.dot_color)} />
+                                      <span>{customerStageConfig[stage.system_stage as keyof typeof customerStageConfig]?.display_name || stage.default_display}</span>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
                           {getCompetitionBadge(opportunity.competitionLevel)}
                         </div>
                       </div>

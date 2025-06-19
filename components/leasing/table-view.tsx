@@ -5,10 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ExternalLink, Search, ArrowUpDown, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import { useOpportunities } from "@/hooks/use-opportunities"
 
 // System stage definitions
 const SYSTEM_STAGES = {
@@ -20,117 +22,7 @@ const SYSTEM_STAGES = {
   CLOSED_LOST: { label: "Lost Deal", color: "bg-gray-100 text-gray-800" },
 }
 
-// Mock data (updated to match kanban view)
-const mockOpportunities = [
-  {
-    id: "1",
-    name: "EcoVolt Multi-Location Expansion",
-    company: { name: "EcoVolt Energy Solutions", logo: "/placeholder.svg?height=32&width=32" },
-    totalSF: "27,475 SF",
-    primaryBuilding: "Cobblestone Collaborative + 1 more",
-    primaryContact: {
-      name: "Sarah Chen",
-      title: "VP Real Estate & Facilities",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    stage: "QUALIFIED",
-    nextActionDate: "2024-01-18",
-    lastActivityDate: "2024-01-15",
-    status: "active",
-    expectedValue: 1250000,
-    competitionLevel: "medium",
-  },
-  {
-    id: "2",
-    name: "TechFlow HQ Consolidation",
-    company: { name: "TechFlow Solutions", logo: "/placeholder.svg?height=32&width=32" },
-    totalSF: "18,200 SF",
-    primaryBuilding: "Innovation Tower",
-    primaryContact: {
-      name: "Mike Rodriguez",
-      title: "Facilities Manager",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    stage: "NEGOTIATING",
-    nextActionDate: "2024-01-20",
-    lastActivityDate: "2024-01-16",
-    status: "active",
-    expectedValue: 650000,
-    competitionLevel: "high",
-  },
-  {
-    id: "3",
-    name: "DataCore Systems Expansion",
-    company: { name: "DataCore Systems", logo: "/placeholder.svg?height=32&width=32" },
-    totalSF: "25,000 SF",
-    primaryBuilding: "Metro Business Center",
-    primaryContact: {
-      name: "Jennifer Park",
-      title: "COO",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    stage: "LEASE_DRAFTING",
-    nextActionDate: "2024-01-25",
-    lastActivityDate: "2024-01-18",
-    status: "active",
-    expectedValue: 825000,
-    competitionLevel: "none",
-  },
-  {
-    id: "4",
-    name: "StartupX Growth Space",
-    company: { name: "StartupX", logo: "/placeholder.svg?height=32&width=32" },
-    totalSF: "3,000 SF",
-    primaryBuilding: "Creative Commons",
-    primaryContact: {
-      name: "Alex Thompson",
-      title: "CEO",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    stage: "CLOSED_LOST",
-    nextActionDate: "2024-01-10",
-    lastActivityDate: "2024-01-10",
-    status: "lost",
-    expectedValue: 108000,
-    competitionLevel: "none",
-  },
-  {
-    id: "5",
-    name: "GreenTech Renewal",
-    company: { name: "GreenTech Innovations", logo: "/placeholder.svg?height=32&width=32" },
-    totalSF: "12,000 SF",
-    primaryBuilding: "Eco Building",
-    primaryContact: {
-      name: "David Kim",
-      title: "Operations Director",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    stage: "NEW",
-    nextActionDate: "2024-01-22",
-    lastActivityDate: "2024-01-19",
-    status: "active",
-    expectedValue: 420000,
-    competitionLevel: "low",
-  },
-  {
-    id: "6",
-    name: "BioLab Research Facility",
-    company: { name: "BioLab Sciences", logo: "/placeholder.svg?height=32&width=32" },
-    totalSF: "35,000 SF",
-    primaryBuilding: "Research Park",
-    primaryContact: {
-      name: "Dr. Lisa Wang",
-      title: "Facilities Director",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    stage: "CLOSED_WON",
-    nextActionDate: "2024-01-18",
-    lastActivityDate: "2024-01-18",
-    status: "won",
-    expectedValue: 1575000,
-    competitionLevel: "none",
-  },
-]
+// Mock data removed - now using shared hook
 
 const getCompetitionIndicator = (level: string) => {
   switch (level) {
@@ -146,14 +38,15 @@ const getCompetitionIndicator = (level: string) => {
 }
 
 export function TableView() {
+  const { opportunities, updateOpportunityStage } = useOpportunities()
   const [searchQuery, setSearchQuery] = useState("")
   const [sortField, setSortField] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
   
-  const filteredOpportunities = mockOpportunities.filter((opportunity) =>
+  const filteredOpportunities = opportunities.filter((opportunity: any) =>
     opportunity.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     opportunity.company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    opportunity.primaryBuilding.toLowerCase().includes(searchQuery.toLowerCase())
+    opportunity.primaryBuilding_name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const formatCurrency = (amount: number) => {
@@ -217,12 +110,25 @@ export function TableView() {
                     <span className="text-sm">{opportunity.company.name}</span>
                   </div>
                 </TableCell>
-                <TableCell className="text-sm text-gray-600">{opportunity.primaryBuilding}</TableCell>
+                <TableCell className="text-sm text-gray-600">{opportunity.primaryBuilding_name}</TableCell>
                 <TableCell className="font-medium">{opportunity.totalSF}</TableCell>
                 <TableCell>
-                  <Badge className={SYSTEM_STAGES[opportunity.stage as keyof typeof SYSTEM_STAGES]?.color || "bg-gray-100 text-gray-800"}>
-                    {SYSTEM_STAGES[opportunity.stage as keyof typeof SYSTEM_STAGES]?.label || opportunity.stage}
-                  </Badge>
+                  <Select 
+                    value={opportunity.stage} 
+                    onValueChange={(value) => updateOpportunityStage(opportunity.id, value)}
+                  >
+                    <SelectTrigger className="w-36">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NEW">Prospect</SelectItem>
+                      <SelectItem value="QUALIFIED">Qualified Lead</SelectItem>
+                      <SelectItem value="NEGOTIATING">Hot Pursuit</SelectItem>
+                      <SelectItem value="LEASE_DRAFTING">Legal Review</SelectItem>
+                      <SelectItem value="CLOSED_WON">Deal Closed</SelectItem>
+                      <SelectItem value="CLOSED_LOST">Lost Deal</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-1">
@@ -244,7 +150,7 @@ export function TableView() {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="font-semibold">{formatCurrency(opportunity.expectedValue)}</TableCell>
+                <TableCell className="font-semibold">{formatCurrency(opportunity.expectedValue_number)}</TableCell>
                 <TableCell className="text-sm text-gray-600">
                   {new Date(opportunity.nextActionDate).toLocaleDateString()}
                 </TableCell>
