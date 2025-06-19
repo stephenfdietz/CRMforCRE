@@ -169,10 +169,10 @@ const BuildingIcons = ({ buildings, buildingNames }: { buildings: string[]; buil
 export function PeopleView() {
   const [activeTab, setActiveTab] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
-  const [companyFilter, setCompanyFilter] = useState<string>("")
-  const [buildingFilter, setBuildingFilter] = useState<string>("")
-  const [tagsFilter, setTagsFilter] = useState<string>("")
-  const [statusFilter, setStatusFilter] = useState<string>("")
+  const [companyFilter, setCompanyFilter] = useState<string>("all")
+  const [buildingFilter, setBuildingFilter] = useState<string>("all")
+  const [tagsFilter, setTagsFilter] = useState<string>("all")
+  const [statusFilter, setStatusFilter] = useState<string>("all")
 
   // Get unique values for filters
   const companies = Array.from(new Set(mockPeople.map(p => p.company))).sort()
@@ -196,16 +196,16 @@ export function PeopleView() {
         !person.email.toLowerCase().includes(searchQuery.toLowerCase())) return false
 
     // Company filter
-    if (companyFilter && person.company !== companyFilter) return false
+    if (companyFilter && companyFilter !== "all" && person.company !== companyFilter) return false
     
     // Building filter  
-    if (buildingFilter && !person.buildingNames.includes(buildingFilter)) return false
+    if (buildingFilter && buildingFilter !== "all" && !person.buildingNames.includes(buildingFilter)) return false
 
     // Tags filter
-    if (tagsFilter && !person.tags.includes(tagsFilter)) return false
+    if (tagsFilter && tagsFilter !== "all" && !person.tags.includes(tagsFilter)) return false
 
     // Status filter
-    if (statusFilter && person.status !== statusFilter) return false
+    if (statusFilter && statusFilter !== "all" && person.status !== statusFilter) return false
 
     return true
   })
@@ -295,7 +295,7 @@ export function PeopleView() {
               <SelectValue placeholder="Company" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Companies</SelectItem>
+              <SelectItem value="all">All Companies</SelectItem>
               {companies.map(company => (
                 <SelectItem key={company} value={company}>{company}</SelectItem>
               ))}
@@ -307,7 +307,7 @@ export function PeopleView() {
               <SelectValue placeholder="Building" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Buildings</SelectItem>
+              <SelectItem value="all">All Buildings</SelectItem>
               {buildings.map(building => (
                 <SelectItem key={building} value={building}>{building}</SelectItem>
               ))}
@@ -319,7 +319,7 @@ export function PeopleView() {
               <SelectValue placeholder="Tags" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Tags</SelectItem>
+              <SelectItem value="all">All Tags</SelectItem>
               {tags.map(tag => (
                 <SelectItem key={tag} value={tag}>{tag}</SelectItem>
               ))}
@@ -331,7 +331,7 @@ export function PeopleView() {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Statuses</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
               {statuses.map(status => (
                 <SelectItem key={status} value={status}>{status}</SelectItem>
               ))}
