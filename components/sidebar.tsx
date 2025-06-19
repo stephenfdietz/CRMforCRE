@@ -26,7 +26,7 @@ const navigation = [
   { name: "Tenants", href: "/tenants", icon: Users },
   { name: "Leasing", href: "/leasing", icon: FileText },
   { name: "Vendors", href: "#", icon: Truck, badge: "NEW" },
-  { name: "People", href: "#", icon: UserCheck },
+  { name: "People", href: "/leasing/people", icon: UserCheck },
   { name: "Transactions", href: "#", icon: CreditCard, badge: "NEW" },
   { name: "Discounts", href: "#", icon: BarChart3 },
   { name: "Analytics", href: "#", icon: BarChart3 },
