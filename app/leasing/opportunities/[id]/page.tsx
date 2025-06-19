@@ -240,7 +240,7 @@ const mockOpportunity = {
       building: {
         id: "bldg-1",
         name: "Cobblestone Collaborative",
-        image: "/placeholder.svg?height=400&width=600",
+        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop&crop=entropy",
         address: "1200 Tech Blvd, Austin, TX 78701",
         class: "Class A+",
         yearBuilt: "2019",
@@ -293,7 +293,7 @@ const mockOpportunity = {
       building: {
         id: "bldg-2",
         name: "Innovation Tower",
-        image: "/placeholder.svg?height=400&width=600", 
+        image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&h=400&fit=crop&crop=entropy", 
         address: "500 Innovation Way, Austin, TX 78701",
         class: "Class A",
         yearBuilt: "2020",

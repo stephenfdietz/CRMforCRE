@@ -79,7 +79,7 @@ const mockOpportunities = [
     // Show primary building in kanban card
     primaryBuilding: {
       name: "Cobblestone Collaborative",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&h=200&fit=crop&crop=entropy",
       address: "1200 Tech Blvd, Austin",
     },
     totalSF: "27,475 SF",
@@ -115,7 +115,7 @@ const mockOpportunities = [
     },
     primaryBuilding: {
       name: "Innovation Tower",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=300&h=200&fit=crop&crop=entropy",
       address: "500 Innovation Way, Austin",
     },
     totalSF: "18,200 SF",
@@ -145,7 +145,7 @@ const mockOpportunities = [
     },
     primaryBuilding: {
       name: "Metro Business Center",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300&h=200&fit=crop&crop=entropy",
       address: "800 Metro Plaza, Austin",
     },
     totalSF: "25,000 SF",
@@ -175,7 +175,7 @@ const mockOpportunities = [
     },
     primaryBuilding: {
       name: "Creative Commons",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop&crop=entropy",
       address: "300 Creative Ave, Austin",
     },
     totalSF: "3,000 SF",
@@ -205,7 +205,7 @@ const mockOpportunities = [
     },
     primaryBuilding: {
       name: "Eco Building",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop&crop=entropy",
       address: "400 Green Way, Austin",
     },
     totalSF: "12,000 SF",
@@ -235,7 +235,7 @@ const mockOpportunities = [
     },
     primaryBuilding: {
       name: "Research Park",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=300&h=200&fit=crop&crop=entropy",
       address: "600 Science Dr, Austin",
     },
     totalSF: "35,000 SF",
