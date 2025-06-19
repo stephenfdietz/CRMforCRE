@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "docs": "./docs-update.sh",
+    "docs-help": "echo '📝 Documentation Commands:' && echo '  npm run docs - Update documentation tracker' && echo '  ./docs-update.sh - Same as npm run docs' && echo '  📂 Files to update: AI_SESSION_CONTEXT.md, README.md, TECHNICAL_DESIGN.md'"
   },
   "dependencies": {
     "@hello-pangea/dnd": "latest",

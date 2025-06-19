@@ -65,4 +65,88 @@ export function ObjectTemplate({ objectType, objectId, objectName, data }: Objec
                   <CardContent>
                     <div className="space-y-4">
                       {(data.activities || []).slice(0, 3).map((activity: any, index: number) => (
-                        <div key={index} className="flex items-start\
+                        <div key={index} className="flex items-start space-x-3">
+                          <div className="text-sm text-gray-500">{activity.date}</div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">{activity.title}</p>
+                            <p className="text-sm text-gray-600">{activity.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                      {(!data.activities || data.activities.length === 0) && (
+                        <p className="text-sm text-gray-500">No recent activity</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Sidebar - 1/3 width */}
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Quick Stats</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {Object.entries(data.stats || {}).map(([key, value]) => (
+                        <div key={key}>
+                          <div className="text-sm text-gray-500">{key}</div>
+                          <div className="text-lg font-semibold">{String(value)}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="transactions" className="m-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>Transaction History</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-500">Transaction history will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="notes" className="m-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>Notes & Comments</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-500">Notes and comments will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="timeline" className="m-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>Timeline</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-500">Timeline events will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="related" className="m-0">
+            <Card>
+              <CardHeader>
+                <CardTitle>Related Objects</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-500">Related objects will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>
+  )
+}

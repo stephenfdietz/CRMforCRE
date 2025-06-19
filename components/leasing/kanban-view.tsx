@@ -8,28 +8,86 @@ import { Building2, Calendar, Users, Square } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 
-// Enhanced mock data with building images and more details
+// System stage definitions - should match the main app
+const SYSTEM_STAGES = {
+  NEW: {
+    system_stage: "NEW",
+    default_display: "Prospect", 
+    color: "border-blue-200 bg-blue-50",
+    dot_color: "bg-blue-500",
+    order: 1,
+  },
+  QUALIFIED: {
+    system_stage: "QUALIFIED", 
+    default_display: "Qualified",
+    color: "border-purple-200 bg-purple-50", 
+    dot_color: "bg-purple-500",
+    order: 2,
+  },
+  NEGOTIATING: {
+    system_stage: "NEGOTIATING",
+    default_display: "Negotiating",
+    color: "border-yellow-200 bg-yellow-50",
+    dot_color: "bg-yellow-500",
+    order: 3,
+  },
+  LEASE_DRAFTING: {
+    system_stage: "LEASE_DRAFTING",
+    default_display: "Lease Review", 
+    color: "border-orange-200 bg-orange-50",
+    dot_color: "bg-orange-500",
+    order: 4,
+  },
+  CLOSED_WON: {
+    system_stage: "CLOSED_WON",
+    default_display: "Closed - Won",
+    color: "border-green-200 bg-green-50", 
+    dot_color: "bg-green-500",
+    order: 5,
+  },
+  CLOSED_LOST: {
+    system_stage: "CLOSED_LOST", 
+    default_display: "Closed - Lost",
+    color: "border-gray-200 bg-gray-50",
+    dot_color: "bg-gray-400",
+    order: 6,
+  },
+}
+
+// Customer-specific stage customization
+const customerStageConfig = {
+  NEW: { display_name: "Prospect", system_stage: "NEW" },
+  QUALIFIED: { display_name: "Qualified Lead", system_stage: "QUALIFIED" },
+  NEGOTIATING: { display_name: "Hot Pursuit", system_stage: "NEGOTIATING" },
+  LEASE_DRAFTING: { display_name: "Legal Review", system_stage: "LEASE_DRAFTING" },
+  CLOSED_WON: { display_name: "Deal Closed", system_stage: "CLOSED_WON" },
+  CLOSED_LOST: { display_name: "Lost Deal", system_stage: "CLOSED_LOST" },
+}
+
+// Enhanced mock data with new stage system
 const mockOpportunities = [
   {
     id: "1",
-    name: "EcoVolt Expansion – Suite 901",
+    name: "EcoVolt Multi-Location Expansion",
+    stage: "QUALIFIED", // Overall opportunity stage
     company: {
-      name: "EcoVolt Energy",
+      name: "EcoVolt Energy Solutions",
       logo: "/placeholder.svg?height=32&width=32",
-      industry: "Clean Energy",
+      industry: "Clean Energy Technology",
       size: "500+ employees",
     },
-    building: {
+    // Show primary building in kanban card
+    primaryBuilding: {
       name: "Cobblestone Collaborative",
       image: "/placeholder.svg?height=200&width=300",
-      address: "1200 Tech Blvd",
+      address: "1200 Tech Blvd, Austin",
     },
-    squareFootage: "12,475 SF",
-    suiteInfo: "Suite 901, Floor 9",
-    stage: "PROSPECT",
+    totalSF: "27,475 SF",
+    spaceCount: 2, // Number of buildings/spaces involved
     targetCloseDate: "2024-02-15",
     status: "active",
-    expectedValue: "$450,000",
+    expectedValue: "$1,250,000",
+    competitionLevel: "medium", // For Innovation Tower space
     contacts: [
       {
         name: "Sarah Chen",
@@ -47,24 +105,25 @@ const mockOpportunities = [
   },
   {
     id: "2",
-    name: "TechFlow HQ Relocation – Floor 3",
+    name: "TechFlow HQ Consolidation",
+    stage: "NEGOTIATING",
     company: {
       name: "TechFlow Solutions",
       logo: "/placeholder.svg?height=32&width=32",
       industry: "Software",
       size: "200+ employees",
     },
-    building: {
+    primaryBuilding: {
       name: "Innovation Tower",
       image: "/placeholder.svg?height=200&width=300",
-      address: "500 Innovation Way",
+      address: "500 Innovation Way, Austin",
     },
-    squareFootage: "8,200 SF",
-    suiteInfo: "Entire Floor 3",
-    stage: "NEGOTIATE",
+    totalSF: "18,200 SF",
+    spaceCount: 1,
     targetCloseDate: "2024-01-28",
     status: "active",
-    expectedValue: "$295,000",
+    expectedValue: "$650,000",
+    competitionLevel: "high",
     contacts: [
       {
         name: "Mike Rodriguez",
@@ -76,24 +135,25 @@ const mockOpportunities = [
   },
   {
     id: "3",
-    name: "DataCore Systems – Suite 1205",
+    name: "DataCore Systems Expansion",
+    stage: "LEASE_DRAFTING",
     company: {
       name: "DataCore Systems",
       logo: "/placeholder.svg?height=32&width=32",
       industry: "Data Analytics",
       size: "1000+ employees",
     },
-    building: {
+    primaryBuilding: {
       name: "Metro Business Center",
       image: "/placeholder.svg?height=200&width=300",
-      address: "800 Metro Plaza",
+      address: "800 Metro Plaza, Austin",
     },
-    squareFootage: "15,000 SF",
-    suiteInfo: "Suite 1205-1210",
-    stage: "CLOSED_WON",
-    targetCloseDate: "2024-01-15",
-    status: "won",
-    expectedValue: "$540,000",
+    totalSF: "25,000 SF",
+    spaceCount: 1,
+    targetCloseDate: "2024-01-25",
+    status: "active",
+    expectedValue: "$825,000",
+    competitionLevel: "none",
     contacts: [
       {
         name: "Jennifer Park",
@@ -101,34 +161,29 @@ const mockOpportunities = [
         avatar: "/placeholder.svg?height=32&width=32",
         initials: "JP",
       },
-      {
-        name: "Robert Kim",
-        title: "Legal Counsel",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "RK",
-      },
     ],
   },
   {
     id: "4",
-    name: "StartupX Growth Space – Suite 450",
+    name: "StartupX Growth Space",
+    stage: "CLOSED_LOST",
     company: {
       name: "StartupX",
       logo: "/placeholder.svg?height=32&width=32",
       industry: "FinTech",
       size: "50+ employees",
     },
-    building: {
+    primaryBuilding: {
       name: "Creative Commons",
       image: "/placeholder.svg?height=200&width=300",
-      address: "300 Creative Ave",
+      address: "300 Creative Ave, Austin",
     },
-    squareFootage: "3,000 SF",
-    suiteInfo: "Suite 450",
-    stage: "CLOSED_LOST",
+    totalSF: "3,000 SF",
+    spaceCount: 1,
     targetCloseDate: "2024-01-10",
     status: "lost",
     expectedValue: "$108,000",
+    competitionLevel: "none",
     contacts: [
       {
         name: "Alex Thompson",
@@ -138,18 +193,79 @@ const mockOpportunities = [
       },
     ],
   },
+  {
+    id: "5",
+    name: "GreenTech Renewal",
+    stage: "NEW",
+    company: {
+      name: "GreenTech Innovations",
+      logo: "/placeholder.svg?height=32&width=32",
+      industry: "Clean Technology",
+      size: "150+ employees",
+    },
+    primaryBuilding: {
+      name: "Eco Building",
+      image: "/placeholder.svg?height=200&width=300",
+      address: "400 Green Way, Austin",
+    },
+    totalSF: "12,000 SF",
+    spaceCount: 1,
+    targetCloseDate: "2024-03-01",
+    status: "active",
+    expectedValue: "$420,000",
+    competitionLevel: "low",
+    contacts: [
+      {
+        name: "David Kim",
+        title: "Operations Director",
+        avatar: "/placeholder.svg?height=32&width=32",
+        initials: "DK",
+      },
+    ],
+  },
+  {
+    id: "6",
+    name: "BioLab Research Facility",
+    stage: "CLOSED_WON",
+    company: {
+      name: "BioLab Sciences",
+      logo: "/placeholder.svg?height=32&width=32",
+      industry: "Biotechnology",
+      size: "300+ employees",
+    },
+    primaryBuilding: {
+      name: "Research Park",
+      image: "/placeholder.svg?height=200&width=300",
+      address: "600 Science Dr, Austin",
+    },
+    totalSF: "35,000 SF",
+    spaceCount: 1,
+    targetCloseDate: "2024-01-18",
+    status: "won",
+    expectedValue: "$1,575,000",
+    competitionLevel: "none",
+    contacts: [
+      {
+        name: "Dr. Lisa Wang",
+        title: "Facilities Director",
+        avatar: "/placeholder.svg?height=32&width=32",
+        initials: "LW",
+      },
+    ],
+  },
 ]
 
-const stages = [
-  { id: "PROSPECT", label: "Prospect", color: "border-blue-200 bg-blue-50" },
-  { id: "NEGOTIATE", label: "Negotiate", color: "border-yellow-200 bg-yellow-50" },
-  { id: "CLOSED_WON", label: "Closed – Won", color: "border-green-200 bg-green-50" },
-  { id: "CLOSED_LOST", label: "Closed – Lost", color: "border-gray-200 bg-gray-50" },
-]
-
-const getStageColor = (stageId: string) => {
-  const stage = stages.find((s) => s.id === stageId)
-  return stage?.color || "border-gray-200 bg-gray-50"
+const getCompetitionBadge = (level: string) => {
+  switch (level) {
+    case "high":
+      return <Badge variant="destructive" className="text-xs">High Competition</Badge>
+    case "medium":
+      return <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800">Competition</Badge>
+    case "low":
+      return <Badge variant="outline" className="text-xs">Low Competition</Badge>
+    default:
+      return null
+  }
 }
 
 export function KanbanView() {
@@ -159,53 +275,43 @@ export function KanbanView() {
     return opportunities.filter((opp) => opp.stage === stageId)
   }
 
+  // Convert SYSTEM_STAGES to array and sort by order
+  const stages = Object.values(SYSTEM_STAGES).sort((a, b) => a.order - b.order)
+
   return (
     <div className="flex space-x-6 overflow-x-auto pb-6">
       {stages.map((stage) => (
-        <div key={stage.id} className="flex-shrink-0 w-80">
+        <div key={stage.system_stage} className="flex-shrink-0 w-80">
           <div className="bg-white rounded-lg border border-gray-200">
             <div className="p-4 border-b border-gray-200">
               <div className="flex items-center space-x-2">
-                <div
-                  className={cn(
-                    "w-3 h-3 rounded-full",
-                    stage.id === "PROSPECT"
-                      ? "bg-blue-500"
-                      : stage.id === "NEGOTIATE"
-                        ? "bg-yellow-500"
-                        : stage.id === "CLOSED_WON"
-                          ? "bg-green-500"
-                          : "bg-gray-400",
-                  )}
-                />
-                <h3 className="font-medium text-gray-900">{stage.label}</h3>
+                <div className={cn("w-3 h-3 rounded-full", stage.dot_color)} />
+                <h3 className="font-medium text-gray-900">
+                  {customerStageConfig[stage.system_stage as keyof typeof customerStageConfig]?.display_name || stage.default_display}
+                </h3>
                 <Badge variant="secondary" className="ml-auto">
-                  {getOpportunitiesByStage(stage.id).length}
+                  {getOpportunitiesByStage(stage.system_stage).length}
                 </Badge>
               </div>
             </div>
 
             <div className="p-4 space-y-4 min-h-[500px]">
-              {getOpportunitiesByStage(stage.id).map((opportunity) => (
+              {getOpportunitiesByStage(stage.system_stage).map((opportunity) => (
                 <Link key={opportunity.id} href={`/leasing/opportunities/${opportunity.id}`}>
-                  <Card
-                    className={cn(
-                      "cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4",
-                      getStageColor(opportunity.stage),
-                    )}
-                  >
+                  <Card className={cn("cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4", stage.color)}>
                     <CardContent className="p-0">
                       {/* Building Image Header */}
                       <div className="relative h-32 bg-gray-100 rounded-t-lg overflow-hidden">
                         <img
-                          src={opportunity.building.image || "/placeholder.svg"}
-                          alt={opportunity.building.name}
+                          src={opportunity.primaryBuilding.image || "/placeholder.svg"}
+                          alt={opportunity.primaryBuilding.name}
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute top-2 right-2">
+                        <div className="absolute top-2 right-2 space-y-1">
                           <Badge variant="secondary" className="text-xs bg-white/90 text-gray-700">
-                            {stage.label}
+                            {customerStageConfig[opportunity.stage as keyof typeof customerStageConfig]?.display_name}
                           </Badge>
+                          {getCompetitionBadge(opportunity.competitionLevel)}
                         </div>
                       </div>
 
@@ -228,13 +334,16 @@ export function KanbanView() {
                         <div className="space-y-2 mb-4">
                           <div className="flex items-center text-sm text-gray-600">
                             <Building2 className="h-4 w-4 mr-2 text-blue-600" />
-                            <span className="font-medium">{opportunity.building.name}</span>
+                            <span className="font-medium">{opportunity.primaryBuilding.name}</span>
+                            {opportunity.spaceCount > 1 && (
+                              <Badge variant="outline" className="ml-2 text-xs">
+                                +{opportunity.spaceCount - 1} more
+                              </Badge>
+                            )}
                           </div>
                           <div className="flex items-center text-sm text-gray-600">
                             <Square className="h-4 w-4 mr-2 text-blue-600" />
-                            <span>
-                              {opportunity.squareFootage} • {opportunity.suiteInfo}
-                            </span>
+                            <span>{opportunity.totalSF} total</span>
                           </div>
                         </div>
 

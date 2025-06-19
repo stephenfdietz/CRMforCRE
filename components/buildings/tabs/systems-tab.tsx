@@ -259,7 +259,7 @@ export function SystemsTab({ building }: SystemsTabProps) {
                       <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                         <div>
                           <p className="font-medium">{component.name}</p>
-                          <Badge size="sm" className={getStatusColor(component.status)}>
+                          <Badge className={getStatusColor(component.status)}>
                             {component.status}
                           </Badge>
                         </div>

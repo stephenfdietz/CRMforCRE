@@ -1,15 +1,16 @@
 import { BuildingDetail } from "@/components/buildings/building-detail"
 
 interface BuildingPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function BuildingPage({ params }: BuildingPageProps) {
+export default async function BuildingPage({ params }: BuildingPageProps) {
+  const { id } = await params
   return (
     <div className="min-h-screen bg-gray-50">
-      <BuildingDetail buildingId={params.id} />
+      <BuildingDetail buildingId={id} />
     </div>
   )
 }

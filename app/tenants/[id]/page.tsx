@@ -1,11 +1,12 @@
 import { TenantDetail } from "@/components/tenant-detail"
 
 interface TenantPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function TenantPage({ params }: TenantPageProps) {
-  return <TenantDetail tenantId={params.id} />
+export default async function TenantPage({ params }: TenantPageProps) {
+  const { id } = await params
+  return <TenantDetail tenantId={id} />
 }
